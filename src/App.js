@@ -8,15 +8,16 @@ import {Epic, View, Root, Tabbar, ModalRoot, TabbarItem, ConfigProvider} from "@
 
 import Icon28Newsfeed from '@vkontakte/icons/dist/28/newsfeed';
 import Icon28More from '@vkontakte/icons/dist/28/more';
+import Icon28Messages from '@vkontakte/icons/dist/28/messages';
+import Icon28AddOutline from '@vkontakte/icons/dist/28/add_outline';
+
+import NewNotePanelBase from './js/panels/new/note';
 
 import HomePanelBase from './js/panels/home/base';
 import HomePanelGroups from './js/panels/home/groups';
 
 import MorePanelBase from './js/panels/more/base';
 import MorePanelExample from './js/panels/more/example';
-
-import HomeBotsListModal from './js/components/modals/HomeBotsListModal';
-import HomeBotInfoModal from './js/components/modals/HomeBotInfoModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -64,19 +65,6 @@ class App extends React.Component {
         let popout = (popouts[activeView] === undefined) ? null : popouts[activeView];
         let activeModal = (activeModals[activeView] === undefined) ? null : activeModals[activeView];
 
-        const homeModals = (
-            <ModalRoot activeModal={activeModal}>
-                <HomeBotsListModal
-                    id="MODAL_PAGE_BOTS_LIST"
-                    onClose={() => closeModal()}
-                />
-                <HomeBotInfoModal
-                    id="MODAL_PAGE_BOT_INFO"
-                    onClose={() => closeModal()}
-                />
-            </ModalRoot>
-        );
-
         return (
             <ConfigProvider isWebView={true} scheme={colorScheme}>
                 <Epic activeStory={activeStory} tabbar={
@@ -84,17 +72,20 @@ class App extends React.Component {
                         <TabbarItem
                             onClick={() => setStory('home', 'base')}
                             selected={activeStory === 'home'}
-                        ><Icon28Newsfeed/></TabbarItem>
-                        <TabbarItem
+                        ><Icon28Messages/></TabbarItem>
+                         <TabbarItem
+                            onClick={() => setStory('new', 'note')}
+                            selected={activeStory === 'new'}
+                        ><Icon28AddOutline/></TabbarItem>
+                        {/* <TabbarItem
                             onClick={() => setStory('more', 'callmodal')}
                             selected={activeStory === 'more'}
-                        ><Icon28More/></TabbarItem>
+                        ><Icon28More/></TabbarItem> */}
                     </Tabbar>
                 }>
                     <Root id="home" activeView={activeView} popout={popout}>
                         <View
                             id="home"
-                            modal={homeModals}
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}
@@ -103,10 +94,19 @@ class App extends React.Component {
                             <HomePanelGroups id="groups"/>
                         </View>
                     </Root>
+                    <Root id="new" activeView={activeView} popout={popout}>
+                        <View
+                            id="new"
+                            activePanel={activePanel}
+                            history={history}
+                            onSwipeBack={() => goBack()}
+                        >
+                            <NewNotePanelBase id="note"/>
+                        </View>
+                    </Root>
                     <Root id="more" activeView={activeView} popout={popout}>
                         <View
                             id="more"
-                            modal={homeModals}
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}
@@ -115,7 +115,6 @@ class App extends React.Component {
                         </View>
                         <View
                             id="modal"
-                            modal={homeModals}
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}

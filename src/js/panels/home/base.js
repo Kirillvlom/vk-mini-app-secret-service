@@ -1,65 +1,73 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {closePopout, goBack, openModal, openPopout, setPage} from '../../store/router/actions';
+import {goBack, setPage} from '../../store/router/actions';
 
-import {Div, Panel, Alert, Group, Button, PanelHeader} from "@vkontakte/vkui"
+import {Panel, PanelHeader, PanelHeaderContent, HeaderContext, List, Cell} from "@vkontakte/vkui"
+
+import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
+
+import Icon24Done from '@vkontakte/icons/dist/24/done';
+import Icon24UserIncoming from '@vkontakte/icons/dist/24/user_incoming';
+import Icon24UserOutgoing from '@vkontakte/icons/dist/24/user_outgoing';
+import Icon24Add from '@vkontakte/icons/dist/24/add';
 
 class HomePanelBase extends React.Component {
 
-    state = {
-        showImg: false
-    };
+    constructor (props) {
+        super(props);
+        
+        this.state = {
+            showImg: false,
+            contextOpened: false
+        };
 
-    showImg = () => {
-        this.setState({showImg: true});
-    };
-
-    openPopout() {
-        this.props.openPopout(
-            <Alert
-                actions={[{
-                    title: 'Нет',
-                    autoclose: true,
-                    style: 'cancel',
-                }, {
-                    title: 'Да',
-                    autoclose: true,
-                    action: this.showImg
-                }]}
-                onClose={() => this.props.closePopout()}
-            >
-                <h2>Вопрос значит</h2>
-                <p>Вас роняли в детстве?</p>
-            </Alert>
-        );
+        this.toggleContext = this.toggleContext.bind(this);
+        this.select = this.select.bind(this);
     }
 
+    toggleContext () {
+        console.log('state', this.state)
+        this.setState({ contextOpened: !this.state.contextOpened });
+    }
+    
+    select (e) {
+        const mode = e.currentTarget.dataset.mode;
+        this.setState({ mode });
+        requestAnimationFrame(this.toggleContext);
+    }
+
+
     render() {
-        const {id, setPage, withoutEpic} = this.props;
+        const {id, setPage} = this.props;
 
         return (
             <Panel id={id}>
-                <PanelHeader>Examples</PanelHeader>
-                <Group>
-                    <Div>
-                        <Button size="l" stretched={true} onClick={() => setPage('home', 'groups')}>Список моих
-                            групп</Button>
-                    </Div>
-                    <Div>
-                        <Button size="l" stretched={true} onClick={() => this.openPopout()}>Открыть алерт</Button>
-                    </Div>
-                    <Div>
-                        <Button size="l" stretched={true} onClick={() => this.props.openModal("MODAL_PAGE_BOTS_LIST")}>Открыть
-                            модальную страницу</Button>
-                    </Div>
-                    {withoutEpic && <Div>
-                        <Button size="l" stretched={true} onClick={() => setPage('modal', 'filters')}>Открыть модальное окно</Button>
-                    </Div>}
-                    {this.state.showImg && <Div className="div-center">
-                        <img src="https://vk.com/sticker/1-12676-256" alt="Стикер VK"/>
-                    </Div>}
-                </Group>
+                <PanelHeader>
+                    <PanelHeaderContent aside={<Icon16Dropdown />} onClick={this.toggleContext}>
+                    Сообщения
+                    </PanelHeaderContent>
+                </PanelHeader>
+                <HeaderContext opened={this.state.contextOpened} onClose={this.toggleContext}>
+                    <List>
+                    <Cell
+                        before={<Icon24UserIncoming />}
+                        asideContent={this.state.mode === 'all' ? <Icon24Done fill="var(--accent)" /> : null}
+                        onClick={this.select}
+                        data-mode="all"
+                    >
+                        Входящие
+                    </Cell>
+                    <Cell
+                        before={<Icon24UserOutgoing />}
+                        asideContent={this.state.mode === 'managed' ? <Icon24Done fill="var(--accent)" /> : null}
+                        onClick={this.select}
+                        data-mode="managed"
+                    >
+                        Исходящие
+                    </Cell>
+                    </List>
+                </HeaderContext>
             </Panel>
         );
     }
@@ -68,10 +76,7 @@ class HomePanelBase extends React.Component {
 
 const mapDispatchToProps = {
     setPage,
-    goBack,
-    openPopout,
-    closePopout,
-    openModal
+    goBack
 };
 
 export default connect(null, mapDispatchToProps)(HomePanelBase);

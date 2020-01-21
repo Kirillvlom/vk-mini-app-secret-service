@@ -50,7 +50,7 @@ class HomePanelProfile extends React.Component {
 
         return (
             <Panel id={id}>
-                <PanelHeader noShadow={true}>Examples 2</PanelHeader>
+                <PanelHeader noShadow={true}>Меню</PanelHeader>
                 <FixedLayout vertical="top">
                     <Tabs theme="header" type="buttons">
                         <HorizontalScroll id="EXAMPLE_TABS_LIST">
@@ -58,25 +58,13 @@ class HomePanelProfile extends React.Component {
                                 onClick={() => this.setTab('modal')}
                                 selected={this.state.activeTab === 'modal'}
                             >
-                                Модальное окно
-                            </TabsItem>
-                            <TabsItem
-                                onClick={() => this.setTab('test')}
-                                selected={this.state.activeTab === 'test'}
-                            >
-                                Для теста
+                                Друзья
                             </TabsItem>
                             <TabsItem
                                 onClick={() => this.setTab('test2')}
                                 selected={this.state.activeTab === 'test2'}
                             >
-                                Для теста 2
-                            </TabsItem>
-                            <TabsItem
-                                onClick={() => this.setTab('test3')}
-                                selected={this.state.activeTab === 'test3'}
-                            >
-                                Для теста 3
+                                Настройки
                             </TabsItem>
                         </HorizontalScroll>
                     </Tabs>
