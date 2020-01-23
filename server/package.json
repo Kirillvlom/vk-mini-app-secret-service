@@ -1,0 +1,24 @@
+{
+  "name": "secret-service-server",
+  "version": "1.0.0",
+  "description": "server part for secret service",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "nodemon --ext js --watch src"
+  },
+  "author": "mikhailushka <m_georgievskii@mail.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.7",
+    "mongoose-bcrypt": "^1.6.0",
+    "morgan": "^1.9.1",
+    "short-unique-id": "^1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
