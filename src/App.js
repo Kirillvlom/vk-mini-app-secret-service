@@ -4,10 +4,8 @@ import {bindActionCreators} from 'redux'
 import {goBack, closeModal, setStory} from "./js/store/router/actions";
 import * as VK from './js/services/VK';
 
-import {Epic, View, Root, Tabbar, ModalRoot, TabbarItem, ConfigProvider} from "@vkontakte/vkui";
+import {Epic, View, Root, Tabbar, TabbarItem, ConfigProvider} from "@vkontakte/vkui";
 
-import Icon28Newsfeed from '@vkontakte/icons/dist/28/newsfeed';
-import Icon28More from '@vkontakte/icons/dist/28/more';
 import Icon28Messages from '@vkontakte/icons/dist/28/messages';
 import Icon28AddOutline from '@vkontakte/icons/dist/28/add_outline';
 
@@ -59,11 +57,10 @@ class App extends React.Component {
     }
 
     render() {
-        const {goBack, setStory, closeModal, popouts, activeView, activeStory, activePanel, activeModals, panelsHistory, colorScheme} = this.props;
+        const {goBack, setStory, popouts, activeView, activeStory, activePanel, panelsHistory, colorScheme} = this.props;
 
         let history = (panelsHistory[activeView] === undefined) ? [activeView] : panelsHistory[activeView];
         let popout = (popouts[activeView] === undefined) ? null : popouts[activeView];
-        let activeModal = (activeModals[activeView] === undefined) ? null : activeModals[activeView];
 
         return (
             <ConfigProvider isWebView={true} scheme={colorScheme}>
@@ -134,7 +131,6 @@ const mapStateToProps = (state) => {
         activePanel: state.router.activePanel,
         activeStory: state.router.activeStory,
         panelsHistory: state.router.panelsHistory,
-        activeModals: state.router.activeModals,
         popouts: state.router.popouts,
         scrollPosition: state.router.scrollPosition,
 

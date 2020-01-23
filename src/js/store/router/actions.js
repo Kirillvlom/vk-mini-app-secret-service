@@ -1,4 +1,4 @@
-import {SET_PAGE, SET_STORY, GO_BACK, OPEN_POPOUT, CLOSE_POPOUT, OPEN_MODAL, CLOSE_MODAL} from './actionTypes';
+import {SET_PAGE, SET_STORY, GO_BACK, OPEN_POPOUT, CLOSE_POPOUT, OPEN_MODAL, CLOSE_MODAL, SET_USER_ID} from './actionTypes';
 
 export const setStory = (story, initial_panel) => (
     {
@@ -52,6 +52,16 @@ export const openModal = (id) => (
         }
     }
 );
+
+export const setCurrentUserId = (id) => (
+    {
+        type: SET_USER_ID,
+        payload: {
+            id
+        }
+    }
+);
+
 
 export const closeModal = () => (
     {

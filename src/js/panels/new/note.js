@@ -1,34 +1,99 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from "redux";
 
-import {closePopout, goBack, openModal, openPopout, setPage} from '../../store/router/actions';
+import {goBack, openPopout, closePopout, openModal} from "../../store/router/actions";
+import * as VK from '../../services/VK';
 
-import {Avatar, Panel, Alert, Group, Button, PanelHeader, FormLayoutGroup, FormLayout, Input, Textarea, Header, HorizontalScroll} from "@vkontakte/vkui"
+import {notesCreateNote, getNotesByUser} from '../../services/requests'
 
-import Icon24User from '@vkontakte/icons/dist/24/user';
+import {Panel, Button, PanelHeader, FormLayoutGroup, FormLayout, Input, Textarea} from "@vkontakte/vkui"
 
-class HomePanelBase extends React.Component {
+class HomePanelGroups extends React.Component {
+
   constructor(props) {
     super(props);
-
+    
     this.state = {
+      loading: true,
+      errorGetAuthToken: false,
       password: '',
       secondPassword: '',
-      message: ''
-    }
+      message: '',
+      correctPassword: true,
+      correctMessage: true,
+      user: ''
+    };
 
     this.onChange = this.onChange.bind(this);
   }
 
+  componentDidMount() {
+    if (this.props.accessToken === undefined) {
+      this.getAuthToken();
+    } else {
+      this.getUsersList();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props !== prevProps) {
+      if (this.props.accessToken === null) {
+        this.setState({
+          loading: false,
+          errorGetAuthToken: true
+        });
+      } else {
+        this.setState({
+          loading: true,
+          errorGetAuthToken: false
+        });
+
+        this.getUsersList();
+      }
+    }
+  }
+
+  getAuthToken() {
+    this.props.dispatch(VK.getAuthToken(['groups']));
+  } 
+
+  async getUsersList() {
+    let currentUser = await VK.currentUserGet();   
+
+    this.setState({
+        user: currentUser,
+        loading: false
+    });
+
+    console.log('this.state.user.id', this.state.user[0].id)
+    let test = await getNotesByUser(`http://localhost:8081/notes/${this.state.user[0].id}`)
+    console.log('test', test)  
+  }
+
   onChange(e) {
-    console.log('e', e.currentTarget)
     const { name, value } = e.currentTarget;
     this.setState({ [name]: value });
   }
 
+  sendRequest(){
+    console.log('this.state', this.state)
+    console.log('this.props', this.props)
+
+    let url = 'http://localhost:8081/notes'
+    let data = {
+      password: this.state.password,
+      description: this.state.message,
+      user: this.state.user
+    }
+
+    notesCreateNote(url, data)
+  }
+
   render() {
-    const { password, secondPassword, message } = this.state;
-    const {id} = this.props;
+    const {id, goBack} = this.props;
+    const { password, secondPassword, message, correctPassword, correctMessage  } = this.state;
+
     const itemStyle = {
       flexShrink: 0,
       width: 80,
@@ -40,66 +105,39 @@ class HomePanelBase extends React.Component {
     };
 
     return (
-        <Panel id={id} theme="white">
-          <PanelHeader>Новое сообщение</PanelHeader>
-          <Group style={{ paddingBottom: 8 }}>
-            <Header level="secondary">Друзья</Header>
-            <HorizontalScroll>
-              <div style={{ display: 'flex' }}>
-                <div style={{ ...itemStyle, paddingLeft: 4 }}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Элджей
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Ольга
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Сергей
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Илья
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Алексей
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Костя
-                </div>
-                <div style={itemStyle}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Миша
-                </div>
-                <div style={{ ...itemStyle, paddingRight: 4 }}>
-                  <Avatar size={64} style={{ marginBottom: 8 }}><Icon24User /></Avatar>
-                  Вадим
-                </div>
-              </div>
-            </HorizontalScroll>
-          </Group>
-          <FormLayout>
-            <FormLayoutGroup top="Пароль" bottom="Пароль может содержать только латинские буквы и цифры.">
-              <Input type="password" name="password" value={password} onChange={this.onChange} placeholder="Введите пароль" />
-              <Input type="password" name="secondPassword" value={secondPassword} onChange={this.onChange} placeholder="Повторите пароль" />
-            </FormLayoutGroup>
-            <Textarea  onChange={this.onChange} name="message" value={message} top="Текст сообщения" />
-            <Button size="xl">Отправить</Button>
-          </FormLayout>
-        </Panel>
+      <Panel id={id} theme="white">
+        <PanelHeader>Новое сообщение</PanelHeader>
+        <FormLayout>
+          <FormLayoutGroup top="Пароль" status={correctPassword ? '' : 'error'} onChange={this.onChange} bottom={correctPassword ? 'Пароли должны совпадать' : 'Ваши пароли не совпадают!'}>
+            <Input type="password" name="password" value={password} onChange={this.onChange} status={correctPassword ? '' : 'error'} placeholder="Введите пароль" />
+            <Input 
+              type="password" 
+              name="secondPassword"   
+              value={secondPassword} 
+              onChange={this.onChange} 
+              placeholder="Повторите пароль"
+              status={correctPassword ? '' : 'error'}
+            />
+          </FormLayoutGroup>
+          <Textarea onChange={this.onChange} name="message" bottom={correctMessage ? '' : 'Введите ваше сообщение!'} status={correctMessage ? '' : 'error'} value={message} top="Текст сообщения" />
+          <Button onClick={() => this.sendRequest()} size="xl">Отправить</Button>
+        </FormLayout>
+      </Panel>
     );
   }
 }
 
-const mapDispatchToProps = {
-    setPage,
-    goBack,
-    openPopout,
-    closePopout,
-    openModal
+function mapDispatchToProps(dispatch) {
+  return {
+      dispatch,
+      ...bindActionCreators({goBack, openPopout, closePopout, openModal}, dispatch)
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+      accessToken: state.vkui.accessToken
+  };
 };
 
-export default connect(null, mapDispatchToProps)(HomePanelBase);
+export default connect(mapStateToProps, mapDispatchToProps)(HomePanelGroups);

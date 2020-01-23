@@ -3,13 +3,14 @@ import {
     SET_ACTIVE_TAB,
     SET_COLOR_SCHEME,
     SET_SCROLL_POSITION,
-    SET_SCROLL_POSITION_BY_ID
+    SET_USER_ID,
+    SET_SCROLL_POSITION_BY_ID,
 } from './actionTypes';
 
 const initialState = {
     accessToken: undefined,
     colorScheme: 'client_light',
-
+    userId: null,
     activeTab: [],
     componentScroll: []
 };
@@ -29,6 +30,13 @@ export const vkuiReducer = (state = initialState, action) => {
             return {
                 ...state,
                 accessToken: action.payload,
+            };
+        }
+
+        case SET_USER_ID: {
+            return {
+                ...state,
+                userId: action.payload,
             };
         }
 

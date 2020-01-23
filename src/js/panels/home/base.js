@@ -10,7 +10,6 @@ import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
 import Icon24Done from '@vkontakte/icons/dist/24/done';
 import Icon24UserIncoming from '@vkontakte/icons/dist/24/user_incoming';
 import Icon24UserOutgoing from '@vkontakte/icons/dist/24/user_outgoing';
-import Icon24Add from '@vkontakte/icons/dist/24/add';
 
 class HomePanelBase extends React.Component {
 
@@ -27,7 +26,6 @@ class HomePanelBase extends React.Component {
     }
 
     toggleContext () {
-        console.log('state', this.state)
         this.setState({ contextOpened: !this.state.contextOpened });
     }
     
@@ -39,7 +37,7 @@ class HomePanelBase extends React.Component {
 
 
     render() {
-        const {id, setPage} = this.props;
+        const {id} = this.props;
 
         return (
             <Panel id={id}>

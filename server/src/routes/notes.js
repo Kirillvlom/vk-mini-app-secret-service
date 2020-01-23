@@ -8,7 +8,7 @@ router.post('/notes', notesController.notesCreateNote)
 
 router.get('/:uniqUrl', notesController.notesGetNote)
 
-router.get('/:uniqUrl/:sender_id', notesController.notesGetNoteForSender)
+router.get('/notes/:userId', notesController.notesGetNoteForSender)
 
 router.post('/:uniqUrl/:password', notesController.notesAceesToNote)
 

@@ -3,9 +3,9 @@ import VKConnect from "@vkontakte/vkui-connect-promise";
 
 import {store} from "../../index";
 
-import {setColorScheme, setAccessToken} from "../store/vk/actions";
+import {setColorScheme, setAccessToken, setCurrentUserId} from "../store/vk/actions";
 
-const APP_ID = 6984089;
+const APP_ID = 7288820;
 const API_VERSION = '5.92';
 
 export const initApp = () => (dispatch) => {
@@ -20,6 +20,12 @@ export const initApp = () => (dispatch) => {
     VKConnectOld.subscribe(VKConnectOldCallback);
     VKConnect.send('VKWebAppInit', {});
 };
+
+export const getCurrentUserId = () => (dispatch) => {
+    VKConnect.send("VKWebAppGetUserInfo", {}).then(data => {
+        dispatch(setCurrentUserId(data));
+    })
+  }
 
 export const getAuthToken = (scope) => (dispatch) => {
     VKConnect.send("VKWebAppGetAuthToken", {
@@ -50,6 +56,10 @@ export const groupsGet = () => {
         "fields": "description",
         "count": "100"
     });
+};
+
+export const currentUserGet = () => {
+    return APICall('users.get', {});
 };
 
 export const APICall = (method, params) => {

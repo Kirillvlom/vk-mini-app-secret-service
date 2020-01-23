@@ -60,7 +60,7 @@ exports.notesGetNote = (req, res) => {
 }
 
 exports.notesGetNoteForSender = (req, res) => {
-  Note.find({ senderId: req.params.userId }).exec((err, notes) => {
+  Note.find({ userId: req.params.userId }).exec((err, notes) => {
     if (err) {
       console.log(err)
       res.sendStatus(500)
