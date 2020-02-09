@@ -71,4 +71,4 @@ const mapDispatchToProps = {
     openModal
 };
 
-export default connect(null, mapDispatchToProps)(HomeBotsListModal);
+export default connect(null, mapToProps)(HomeBotsListModal);

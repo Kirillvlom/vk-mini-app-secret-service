@@ -4,18 +4,18 @@ import {bindActionCreators} from 'redux'
 import {goBack, closeModal, setStory} from "./js/store/router/actions";
 import * as VK from './js/services/VK';
 
-import {Epic, View, Root, Tabbar, TabbarItem, ConfigProvider} from "@vkontakte/vkui";
+import {Epic, View, Root, Tabbar, TabbarItem, ConfigProvider, ModalRoot} from "@vkontakte/vkui";
 
 import Icon28Messages from '@vkontakte/icons/dist/28/messages';
 import Icon28AddOutline from '@vkontakte/icons/dist/28/add_outline';
+import Icon28Search from '@vkontakte/icons/dist/28/search';
 
-import NewNotePanelBase from './js/panels/new/note';
-
+import NewNotePanelBase from './js/panels/notes/new';
 import HomePanelBase from './js/panels/home/base';
-import HomePanelGroups from './js/panels/home/groups';
+import SearchPanelBase from './js/panels/search/base';
 
-import MorePanelBase from './js/panels/more/base';
-import MorePanelExample from './js/panels/more/example';
+
+import HomeBotInfoModal from './js/components/modals/HomeBotInfoModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -57,10 +57,20 @@ class App extends React.Component {
     }
 
     render() {
-        const {goBack, setStory, popouts, activeView, activeStory, activePanel, panelsHistory, colorScheme} = this.props;
+        const {goBack, setStory, closeModal, popouts, activeView, activeStory, activePanel, activeModals, panelsHistory, colorScheme} = this.props;
 
         let history = (panelsHistory[activeView] === undefined) ? [activeView] : panelsHistory[activeView];
         let popout = (popouts[activeView] === undefined) ? null : popouts[activeView];
+        let activeModal = (activeModals[activeView] === undefined) ? null : activeModals[activeView];
+
+        const homeModals = (
+            <ModalRoot activeModal={activeModal}>
+                <HomeBotInfoModal
+                    id="MODAL_PAGE_BOT_INFO"
+                    onClose={() => closeModal()}
+                />
+            </ModalRoot>
+        );
 
         return (
             <ConfigProvider isWebView={true} scheme={colorScheme}>
@@ -71,52 +81,44 @@ class App extends React.Component {
                             selected={activeStory === 'home'}
                         ><Icon28Messages/></TabbarItem>
                          <TabbarItem
-                            onClick={() => setStory('new', 'note')}
-                            selected={activeStory === 'new'}
+                            onClick={() => setStory('note', 'new')}
+                            selected={activeStory === 'note'}
                         ><Icon28AddOutline/></TabbarItem>
-                        {/* <TabbarItem
-                            onClick={() => setStory('more', 'callmodal')}
-                            selected={activeStory === 'more'}
-                        ><Icon28More/></TabbarItem> */}
+                        <TabbarItem
+                            onClick={() => setStory('search', 'base')}
+                            selected={activeStory === 'search'}
+                        ><Icon28Search/></TabbarItem>
                     </Tabbar>
                 }>
                     <Root id="home" activeView={activeView} popout={popout}>
                         <View
                             id="home"
+                            modal={homeModals}
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}
                         >
-                            <HomePanelBase id="base" withoutEpic={false}/>
-                            <HomePanelGroups id="groups"/>
+                            <HomePanelBase id="base"/>
                         </View>
                     </Root>
-                    <Root id="new" activeView={activeView} popout={popout}>
+                    <Root id="note" activeView={activeView} popout={popout}>
                         <View
-                            id="new"
+                            id="note"
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}
                         >
-                            <NewNotePanelBase id="note"/>
+                            <NewNotePanelBase id="new"/>
                         </View>
                     </Root>
-                    <Root id="more" activeView={activeView} popout={popout}>
+                    <Root id="search" activeView={activeView} popout={popout}>
                         <View
-                            id="more"
+                            id="search"
                             activePanel={activePanel}
                             history={history}
                             onSwipeBack={() => goBack()}
                         >
-                            <MorePanelBase id="callmodal"/>
-                        </View>
-                        <View
-                            id="modal"
-                            activePanel={activePanel}
-                            history={history}
-                            onSwipeBack={() => goBack()}
-                        >
-                            <MorePanelExample id="filters"/>
+                            <SearchPanelBase id="base"/>
                         </View>
                     </Root>
                 </Epic>
@@ -130,6 +132,7 @@ const mapStateToProps = (state) => {
         activeView: state.router.activeView,
         activePanel: state.router.activePanel,
         activeStory: state.router.activeStory,
+        activeModals: state.router.activeModals,
         panelsHistory: state.router.panelsHistory,
         popouts: state.router.popouts,
         scrollPosition: state.router.scrollPosition,

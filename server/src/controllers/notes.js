@@ -28,6 +28,7 @@ exports.notesCreateNote= (req, res) => {
   let descriptionHash = encrypt(req.body.description)
 
   const note = new Note({
+    comment: req.body.comment,
     description: descriptionHash,
     password: passwordHash,
     uniqUrl: generatedUniqUrl.randomUUID(6),
@@ -54,7 +55,7 @@ exports.notesGetNote = (req, res) => {
       console.log(err)
       res.sendStatus(500)
     } else {
-      res.send(note)
+      res.send(note || {comment: 'not found'})
     }
   })
 }

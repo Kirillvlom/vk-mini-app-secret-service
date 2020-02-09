@@ -5,9 +5,9 @@ import {bindActionCreators} from "redux";
 import {goBack, openPopout, closePopout, openModal} from "../../store/router/actions";
 import * as VK from '../../services/VK';
 
-import {notesCreateNote, getNotesByUser} from '../../services/requests'
+import {notesCreateNote, findNote} from '../../services/requests'
 
-import {Panel, Button, PanelHeader, FormLayoutGroup, FormLayout, Input, Textarea} from "@vkontakte/vkui"
+import {Panel, Button, PanelHeader, FormLayoutGroup, FormLayout, Input, Textarea, Search, Group, List, Cell} from "@vkontakte/vkui"
 
 class HomePanelGroups extends React.Component {
 
@@ -20,9 +20,12 @@ class HomePanelGroups extends React.Component {
       password: '',
       secondPassword: '',
       message: '',
+      comment: '',
+      note: {},
       correctPassword: true,
       correctMessage: true,
-      user: ''
+      user: '',
+      search: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -32,7 +35,8 @@ class HomePanelGroups extends React.Component {
     if (this.props.accessToken === undefined) {
       this.getAuthToken();
     } else {
-      this.getUsersList();
+      this.onChange('')
+      this.getCurentUser();
     }
   }
 
@@ -49,7 +53,7 @@ class HomePanelGroups extends React.Component {
           errorGetAuthToken: false
         });
 
-        this.getUsersList();
+        this.getCurentUser();
       }
     }
   }
@@ -58,30 +62,30 @@ class HomePanelGroups extends React.Component {
     this.props.dispatch(VK.getAuthToken(['groups']));
   } 
 
-  async getUsersList() {
+  async getCurentUser() {
     let currentUser = await VK.currentUserGet();   
 
     this.setState({
         user: currentUser,
         loading: false
     });
-
-    console.log('this.state.user.id', this.state.user[0].id)
-    let test = await getNotesByUser(`http://localhost:8081/notes/${this.state.user[0].id}`)
-    console.log('test', test)  
   }
 
-  onChange(e) {
-    const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
+  onChange (search) {
+    let url = 'http://localhost:8081/' + 'ping'
+    if(search.length > 0) url = 'http://localhost:8081/' + search 
+
+    findNote(url).then((note) => {
+      if(note) {
+        this.setState({ note: note, search: search })}
+    })
   }
 
   sendRequest(){
-    console.log('this.state', this.state)
-    console.log('this.props', this.props)
 
     let url = 'http://localhost:8081/notes'
     let data = {
+      comment: this.state.comment,
       password: this.state.password,
       description: this.state.message,
       user: this.state.user
@@ -92,7 +96,7 @@ class HomePanelGroups extends React.Component {
 
   render() {
     const {id, goBack} = this.props;
-    const { password, secondPassword, message, correctPassword, correctMessage  } = this.state;
+    const { note  } = this.state;
 
     const itemStyle = {
       flexShrink: 0,
@@ -104,24 +108,21 @@ class HomePanelGroups extends React.Component {
       fontSize: 12
     };
 
+    console.log(this.state)
+
     return (
       <Panel id={id} theme="white">
-        <PanelHeader>Новое сообщение</PanelHeader>
-        <FormLayout>
-          <FormLayoutGroup top="Пароль" status={correctPassword ? '' : 'error'} onChange={this.onChange} bottom={correctPassword ? 'Пароли должны совпадать' : 'Ваши пароли не совпадают!'}>
-            <Input type="password" name="password" value={password} onChange={this.onChange} status={correctPassword ? '' : 'error'} placeholder="Введите пароль" />
-            <Input 
-              type="password" 
-              name="secondPassword"   
-              value={secondPassword} 
-              onChange={this.onChange} 
-              placeholder="Повторите пароль"
-              status={correctPassword ? '' : 'error'}
-            />
-          </FormLayoutGroup>
-          <Textarea onChange={this.onChange} name="message" bottom={correctMessage ? '' : 'Введите ваше сообщение!'} status={correctMessage ? '' : 'error'} value={message} top="Текст сообщения" />
-          <Button onClick={() => this.sendRequest()} size="xl">Отправить</Button>
-        </FormLayout>
+        <PanelHeader>Поиск сообщения</PanelHeader>
+        <Search value={this.state.search} onSubmit={()=> {console.log('+')}} onChange={this.onChange}/>
+        <Group title="Найденные сообщения">
+          <List>
+            <Cell
+              description={note.uniqUrl}
+              >
+                {note.comment || 'Без комментария'}
+            </Cell>
+          </List>
+        </Group>
       </Panel>
     );
   }
