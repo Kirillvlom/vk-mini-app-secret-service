@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
 
-import {goBack, setPage} from '../../store/router/actions';
+import {goBack, setPage, openModal} from '../../store/router/actions';
 
 import {Panel, PanelHeader, List, Group, Cell} from "@vkontakte/vkui"
 
@@ -19,7 +19,7 @@ class HomePanelBase extends React.Component {
           showImg: false,
           contextOpened: false,
           user: '',
-          notes: []
+          notes: [{id: 228, uniqUrl: 'sdsSd2', comment: 'test'}]
       };
     }
 
@@ -76,8 +76,7 @@ class HomePanelBase extends React.Component {
 
     render() {
         const {id, setPage} = this.props;
-        console.log('this.state', this.state)
-        console.log('this.props', this.props)
+        console.log('state', this.state)
 
         return (
             <Panel id={id}>
@@ -88,7 +87,7 @@ class HomePanelBase extends React.Component {
                       return (<Cell
                       key={note.id}
                       stretched={true} 
-                      onClick={() => setPage('show', 'note')}
+                      onClick={() => this.props.openModal("MODAL_PAGE_BOTS_LIST")}
                       description={note.uniqUrl}
                       >
                         {note.comment || 'Без комментария'}
@@ -106,8 +105,7 @@ class HomePanelBase extends React.Component {
 function mapDispatchToProps(dispatch) {
   return {
       dispatch,
-      setPage,
-      ...bindActionCreators({goBack}, dispatch)
+      ...bindActionCreators({goBack, setPage, openModal}, dispatch)
   }
 }
 

@@ -5,7 +5,7 @@ import {bindActionCreators} from "redux";
 import {goBack, openPopout, closePopout, openModal} from "../../store/router/actions";
 import * as VK from '../../services/VK';
 
-import {notesCreateNote, getNotesByUser} from '../../services/requests'
+import {notesCreateNote} from '../../services/requests'
 
 import {Panel, Button, PanelHeader, FormLayoutGroup, FormLayout, Input, Textarea} from "@vkontakte/vkui"
 
@@ -74,7 +74,6 @@ class HomePanelGroups extends React.Component {
   }
 
   sendRequest(){
-
     let url = 'http://localhost:8081/notes'
     let data = {
       comment: this.state.comment,
@@ -83,7 +82,15 @@ class HomePanelGroups extends React.Component {
       user: this.state.user
     }
 
-    notesCreateNote(url, data)
+    let response = notesCreateNote(url, data)
+
+    console.log('response', response)
+
+    if(response.success == true){
+      console.log('+')
+    } else {
+      console.log('-')
+    }
   }
 
   render() {

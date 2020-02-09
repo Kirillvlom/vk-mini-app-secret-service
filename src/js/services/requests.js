@@ -1,5 +1,4 @@
 export async function notesCreateNote(url = '', data) {
-    console.log('data', data)
   // Значения по умолчанию обозначены знаком *
     const response = await fetch(url, {
         method: 'POST',

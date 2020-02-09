@@ -15,6 +15,7 @@ import HomePanelBase from './js/panels/home/base';
 import SearchPanelBase from './js/panels/search/base';
 
 
+import HomeBotsListModal from './js/components/modals/HomeBotsListModal';
 import HomeBotInfoModal from './js/components/modals/HomeBotInfoModal';
 
 class App extends React.Component {
@@ -63,8 +64,14 @@ class App extends React.Component {
         let popout = (popouts[activeView] === undefined) ? null : popouts[activeView];
         let activeModal = (activeModals[activeView] === undefined) ? null : activeModals[activeView];
 
+        console.log('this.props APP', this.props)
+
         const homeModals = (
             <ModalRoot activeModal={activeModal}>
+                <HomeBotsListModal
+                    id="MODAL_PAGE_BOTS_LIST"
+                    onClose={() => closeModal()}
+                />
                 <HomeBotInfoModal
                     id="MODAL_PAGE_BOT_INFO"
                     onClose={() => closeModal()}

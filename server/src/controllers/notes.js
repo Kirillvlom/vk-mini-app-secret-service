@@ -55,7 +55,7 @@ exports.notesGetNote = (req, res) => {
       console.log(err)
       res.sendStatus(500)
     } else {
-      res.send(note || {comment: 'not found'})
+      res.send(note || {comment: 'Ничего не найдено'})
     }
   })
 }

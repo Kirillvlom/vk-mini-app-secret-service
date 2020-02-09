@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 
 import {openModal} from "../../store/router/actions";
 
-import {List, Cell, Avatar, ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS} from "@vkontakte/vkui";
+import {List, Cell, Avatar, ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS, Input, FormLayout, Button} from "@vkontakte/vkui";
 
 import Icon24Dismiss from '@vkontakte/icons/dist/24/dismiss';
 import Icon24Cancel from '@vkontakte/icons/dist/24/cancel';
@@ -42,25 +42,16 @@ class HomeBotsListModal extends React.Component {
                         right={IS_PLATFORM_IOS &&
                         <HeaderButton onClick={onClose}><Icon24Dismiss/></HeaderButton>}
                     >
-                        /appbots на минималках
+                        Введите пароль для расшифровки:
                     </ModalPageHeader>
                 }
                 onClose={onClose}
                 settlingHeight={80}
             >
-                <List>
-                    {bots.map((bot, index) => (
-                        <Cell
-                            key={index}
-                            description={bot.desc}
-                            before={<Avatar size={40} src={bot.avatar}/>}
-                            onClick={() => openModal('MODAL_PAGE_BOT_INFO')}
-                            asideContent={<Icon24Chevron fill="#528bcc"/>}
-                        >
-                            {bot.name}
-                        </Cell>
-                    ))}
-                </List>
+            <FormLayout>
+                <Input type="password" name="password" placeholder="Введите пароль" />
+                <Button onClick={() => openModal('MODAL_PAGE_BOT_INFO')} size="xl">Расшифровать</Button>
+            </FormLayout>
             </ModalPage>
         );
     }
@@ -71,4 +62,4 @@ const mapDispatchToProps = {
     openModal
 };
 
-export default connect(null, mapToProps)(HomeBotsListModal);
+export default connect(null, mapDispatchToProps)(HomeBotsListModal);

@@ -1,7 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {Cell, List, Avatar, InfoRow, ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS} from "@vkontakte/vkui";
+import {Cell, List, Avatar, InfoRow, ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS, FormLayout, Input, Textarea, Button, Div} from "@vkontakte/vkui";
+import '@vkontakte/vkui/dist/vkui.css';
 
 import Icon24Dismiss from '@vkontakte/icons/dist/24/dismiss';
 import Icon24Cancel from '@vkontakte/icons/dist/24/cancel';
@@ -21,35 +22,20 @@ class HomeBotsListModal extends React.Component {
                         right={IS_PLATFORM_IOS &&
                         <HeaderButton onClick={onClose}><Icon24Dismiss/></HeaderButton>}
                     >
-                        Информация о боте
+                        Комментарий 
                     </ModalPageHeader>
                 }
                 onClose={onClose}
                 settlingHeight={80}
             >
-                <Cell
-                    description="Описание"
-                    before={<Avatar size={40} src="https://vk.com/images/community_100.png?ava=1"/>}
-                >
-                    Название
-                </Cell>
-                <List>
-                    <Cell>
-                        <InfoRow title="Подписчиков">
-                            8800
-                        </InfoRow>
-                    </Cell>
-                    <Cell>
-                        <InfoRow title="Записей">
-                            555
-                        </InfoRow>
-                    </Cell>
-                    <Cell>
-                        <InfoRow title="Рейтинг">
-                            3535
-                        </InfoRow>
-                    </Cell>
-                </List>
+               <FormLayout>
+                    <Input type="text" name="comment" onChange={this.onChange} top="Комментарий" bottom="Комментарий не будет зашифрован и будет виден всем пользователям" placeholder="Введите комментарий" /> 
+                    <Textarea name="message" splaceholder="Очень важный и секретный уже расшифрованный текст" top="Текст сообщения" />
+                    <Div style={{display: 'flex', padding: 0}}>
+                        <Button size="xl" style={{ marginRight: 8, backgroundColor: '#e64646' }}>Удалить</Button>
+                        <Button size="xl">Сохранить</Button>
+                    </Div>
+                </FormLayout>
             </ModalPage>
         );
     }
