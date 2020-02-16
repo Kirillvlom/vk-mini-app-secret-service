@@ -2,12 +2,12 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {openModal} from "../../store/router/actions";
+import {aceesToNote} from '../../services/requests'
 
-import {List, Cell, Avatar, ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS, Input, FormLayout, Button} from "@vkontakte/vkui";
+import { ModalPage, ModalPageHeader, HeaderButton, IS_PLATFORM_IOS, Input, FormLayout, Button} from "@vkontakte/vkui";
 
 import Icon24Dismiss from '@vkontakte/icons/dist/24/dismiss';
 import Icon24Cancel from '@vkontakte/icons/dist/24/cancel';
-import Icon24Chevron from '@vkontakte/icons/dist/24/chevron';
 
 const bots = [
     {
@@ -29,8 +29,45 @@ const bots = [
 
 class HomeBotsListModal extends React.Component {
 
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+          password: '',
+          correctPassword: true
+        };
+    
+        this.onChange = this.onChange.bind(this);
+    }
+
+    
+  onChange(e) {
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: value });
+  }
+
+  async sendRequest() {
+    let note = await aceesToNote(`http://localhost:8081/${this.props.note.uniqUrl}/${this.state.password}`)
+    if(note.description) {
+        note = { 
+            comment: this.props.note.comment,
+            uniqUrl: this.props.note.uniqUrl,
+            validPassword: this.state.password,
+            ...note 
+        }
+        this.props.openModal('MODAL_PAGE_BOT_INFO', note)
+    } else {
+        this.setState({ correctPassword: false });
+    } 
+  }
+
+  passwordToNote() {
+      
+  }
+
     render() {
-        const {id, onClose, openModal} = this.props;
+        const {id, onClose} = this.props;
+        const {password, correctPassword} = this.state;
 
         return (
             <ModalPage
@@ -45,12 +82,12 @@ class HomeBotsListModal extends React.Component {
                         Введите пароль для расшифровки:
                     </ModalPageHeader>
                 }
-                onClose={onClose}
+                onClick={onClose}
                 settlingHeight={80}
             >
             <FormLayout>
-                <Input type="password" name="password" placeholder="Введите пароль" />
-                <Button onClick={() => openModal('MODAL_PAGE_BOT_INFO')} size="xl">Расшифровать</Button>
+                <Input type="password" name="password"  value={password} onChange={this.onChange}  status={correctPassword ? '' : 'error'} placeholder={correctPassword ? 'Введите пароль' : 'Пароль не верный!'} />
+                <Button onClick={() => this.sendRequest()} size="xl">Расшифровать</Button>
             </FormLayout>
             </ModalPage>
         );

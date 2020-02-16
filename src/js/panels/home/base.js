@@ -43,7 +43,6 @@ class HomePanelBase extends React.Component {
             loading: true,
             errorGetAuthToken: false
           });
-  
           this.getCurentUser();
         }
       }
@@ -76,7 +75,6 @@ class HomePanelBase extends React.Component {
 
     render() {
         const {id, setPage} = this.props;
-        console.log('state', this.state)
 
         return (
             <Panel id={id}>
@@ -87,7 +85,7 @@ class HomePanelBase extends React.Component {
                       return (<Cell
                       key={note.id}
                       stretched={true} 
-                      onClick={() => this.props.openModal("MODAL_PAGE_BOTS_LIST")}
+                      onClick={() => this.props.openModal("MODAL_PAGE_BOTS_LIST", note)}
                       description={note.uniqUrl}
                       >
                         {note.comment || 'Без комментария'}

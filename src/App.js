@@ -9,10 +9,12 @@ import {Epic, View, Root, Tabbar, TabbarItem, ConfigProvider, ModalRoot} from "@
 import Icon28Messages from '@vkontakte/icons/dist/28/messages';
 import Icon28AddOutline from '@vkontakte/icons/dist/28/add_outline';
 import Icon28Search from '@vkontakte/icons/dist/28/search';
+import Icon28More from '@vkontakte/icons/dist/28/more';
 
 import NewNotePanelBase from './js/panels/notes/new';
 import HomePanelBase from './js/panels/home/base';
 import SearchPanelBase from './js/panels/search/base';
+import ExplorePanelBase from './js/panels/explore/base'
 
 
 import HomeBotsListModal from './js/components/modals/HomeBotsListModal';
@@ -58,7 +60,7 @@ class App extends React.Component {
     }
 
     render() {
-        const {goBack, setStory, closeModal, popouts, activeView, activeStory, activePanel, activeModals, panelsHistory, colorScheme} = this.props;
+        const {goBack, setStory, closeModal, popouts, activeView, activeStory, activePanel, activeModals, panelsHistory, colorScheme, activeNote} = this.props;
 
         let history = (panelsHistory[activeView] === undefined) ? [activeView] : panelsHistory[activeView];
         let popout = (popouts[activeView] === undefined) ? null : popouts[activeView];
@@ -70,11 +72,14 @@ class App extends React.Component {
             <ModalRoot activeModal={activeModal}>
                 <HomeBotsListModal
                     id="MODAL_PAGE_BOTS_LIST"
+                    note={this.props.activeNote}
                     onClose={() => closeModal()}
                 />
                 <HomeBotInfoModal
                     id="MODAL_PAGE_BOT_INFO"
-                    onClose={() => closeModal()}
+
+                    note={this.props.activeNote}
+                    onClose={() => setStory('note', 'new')}
                 />
             </ModalRoot>
         );
@@ -95,6 +100,10 @@ class App extends React.Component {
                             onClick={() => setStory('search', 'base')}
                             selected={activeStory === 'search'}
                         ><Icon28Search/></TabbarItem>
+                         <TabbarItem
+                            onClick={() => setStory('explore', 'base')}
+                            selected={activeStory === 'explore'}
+                        ><Icon28More/></TabbarItem>
                     </Tabbar>
                 }>
                     <Root id="home" activeView={activeView} popout={popout}>
@@ -115,7 +124,7 @@ class App extends React.Component {
                             history={history}
                             onSwipeBack={() => goBack()}
                         >
-                            <NewNotePanelBase id="new"/>
+                            <NewNotePanelBase setStory={setStory} id="new" />
                         </View>
                     </Root>
                     <Root id="search" activeView={activeView} popout={popout}>
@@ -126,6 +135,16 @@ class App extends React.Component {
                             onSwipeBack={() => goBack()}
                         >
                             <SearchPanelBase id="base"/>
+                        </View>
+                    </Root>
+                    <Root id="explore" activeView={activeView} popout={popout}>
+                        <View
+                            id="explore"
+                            activePanel={activePanel}
+                            history={history}
+                            onSwipeBack={() => goBack()}
+                        >
+                            <ExplorePanelBase id="base"/>
                         </View>
                     </Root>
                 </Epic>
@@ -140,6 +159,7 @@ const mapStateToProps = (state) => {
         activePanel: state.router.activePanel,
         activeStory: state.router.activeStory,
         activeModals: state.router.activeModals,
+        activeNote: state.router.activeNote,
         panelsHistory: state.router.panelsHistory,
         popouts: state.router.popouts,
         scrollPosition: state.router.scrollPosition,

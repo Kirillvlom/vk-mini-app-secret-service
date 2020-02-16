@@ -44,11 +44,12 @@ export const closePopout = () => (
     }
 );
 
-export const openModal = (id) => (
+export const openModal = (id, note) => (
     {
         type: OPEN_MODAL,
         payload: {
-            id
+            id,
+            note
         }
     }
 );

@@ -3,6 +3,7 @@ const ShortUniqueId = require('short-unique-id')
 
 const crypto = require('crypto')
 const algorithm = 'aes-256-cbc'
+// Вынести в secrets.js и сменить
 const password = 'd6F3Efeq'
 
 

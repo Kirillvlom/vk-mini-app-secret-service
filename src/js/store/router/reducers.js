@@ -15,10 +15,11 @@ const initialState = {
     activeStory: null,
     activeView: null,
     activePanel: null,
+    activeNote: null,
 
     storiesHistory: [],
     viewsHistory: [],
-    panelsHistory: [],
+    panelsHistory: [], 
 
     activeModals: [],
     modalHistory: [],
@@ -83,6 +84,7 @@ export const routerReducer = (state = initialState, action) => {
             let activeView = viewsHistory[viewsHistory.length - 1];
             let panelsHistory = state.panelsHistory[activeView] || [action.payload.initial_panel];
             let activePanel = panelsHistory[panelsHistory.length - 1];
+        
 
             if (action.payload.story === state.activeStory) {
                 if (panelsHistory.length > 1) {
@@ -117,6 +119,7 @@ export const routerReducer = (state = initialState, action) => {
                 activeStory: action.payload.story,
                 activeView: activeView,
                 activePanel: activePanel,
+                activeModals: [],
 
                 storiesHistory: storiesHistory,
                 viewsHistory: {
@@ -126,6 +129,10 @@ export const routerReducer = (state = initialState, action) => {
                 panelsHistory: {
                     ...state.panelsHistory,
                     [activeView]: panelsHistory
+                },
+
+                modalHistory: {
+                    [state.activeView]: []
                 },
 
                 scrollPosition: {
@@ -258,6 +265,7 @@ export const routerReducer = (state = initialState, action) => {
             window.history.pushState(null, null);
 
             let activeModal = action.payload.id || null;
+            let activeNote = action.payload.note || null;
             let modalsHistory = state.modalHistory[state.activeView] ? [...state.modalHistory[state.activeView]] : [];
 
             if (activeModal === null) {
@@ -270,8 +278,8 @@ export const routerReducer = (state = initialState, action) => {
 
             return {
                 ...state,
+                activeNote: activeNote,
                 activeModals: {
-                    ...state.activeModals,
                     [state.activeView]: activeModal
                 },
                 modalHistory: {
